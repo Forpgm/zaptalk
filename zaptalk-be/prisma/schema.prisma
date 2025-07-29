@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id             String    @id @default(uuid())
+  first_name     String
+  last_name      String
+  username       String
+  email          String    @unique
+  password       String
+  phone_number   String    @unique
+  dob            DateTime?
+  avatar_url     String    @default("https://zaptalk.s3.us-east-1.amazonaws.com/avatar/default.jpg")
+  role           String    @default("MEMBER")
+  is_verified    Boolean   @default(false)
+  is_2fa_enabled Boolean   @default(false)
+  two_fa_secret  String?
+  last_login     DateTime?
+  status         String    @default("ACTIVE")
+  created_at     DateTime  @default(now())
+  created_by     String?
+  updated_at     DateTime  @updatedAt
+  updated_by     String?
+  deleted_at     DateTime?
+  deleted_by     String?
+
+  chat_room_members chat_room_members[]
+  chat_lines        chat_lines[]
+  chat_last_seen    chat_last_seen[]
+  reactions         reactions[]
+  call_histories    call_histories[]
+  call_participants call_participants[]
+}
+
+model chat_rooms {
+  id         String    @id @default(uuid())
+  name       String?
+  is_group   Boolean   @default(false)
+  created_at DateTime  @default(now())
+  created_by String?
+  updated_at DateTime  @updatedAt
+  updated_by String?
+  deleted_at DateTime?
+  deleted_by String?
+
+  chat_room_members chat_room_members[]
+  chat_lines        chat_lines[]
+  chat_last_seen    chat_last_seen[]
+  reactions         reactions[]
+  call_histories    call_histories[]
+}
+
+model chat_room_members {
+  id           String    @id @default(uuid())
+  chat_room_id String
+  user_id      String
+  nick_name    String
+  role         String    @default("member")
+  permissions  Json?
+  created_at   DateTime  @default(now())
+  created_by   String?
+  updated_at   DateTime  @updatedAt
+  updated_by   String?
+  deleted_at   DateTime?
+  deleted_by   String?
+
+  chat_room chat_rooms @relation(fields: [chat_room_id], references: [id])
+  user      users      @relation(fields: [user_id], references: [id])
+}
+
+model chat_lines {
+  id           String    @id @default(uuid())
+  chat_room_id String
+  sender_id    String
+  content      String
+  content_type String    @default("text")
+  duration     Int?
+  reply_to_id  String?
+  status       String    @default("sent")
+  created_at   DateTime  @default(now())
+  created_by   String?
+  updated_at   DateTime  @updatedAt
+  updated_by   String?
+  deleted_at   DateTime?
+  deleted_by   String?
+
+  chat_room      chat_rooms       @relation(fields: [chat_room_id], references: [id])
+  sender         users            @relation(fields: [sender_id], references: [id])
+  media          media[]
+  reactions      reactions[]
+  chat_last_seen chat_last_seen[]
+}
+
+model chat_last_seen {
+  id                     String    @id @default(uuid())
+  chat_room_id           String
+  user_id                String
+  last_seen_chat_line_id String
+  seen_at                DateTime?
+  created_at             DateTime  @default(now())
+  created_by             String?
+  updated_at             DateTime  @updatedAt
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+
+  chat_room         chat_rooms @relation(fields: [chat_room_id], references: [id])
+  user              users      @relation(fields: [user_id], references: [id])
+  last_seen_message chat_lines @relation(fields: [last_seen_chat_line_id], references: [id])
+}
+
+model reactions {
+  id            String    @id @default(uuid())
+  chat_room_id  String
+  chat_line_id  String
+  user_id       String
+  reaction_type String
+  created_at    DateTime  @default(now())
+  created_by    String?
+  updated_at    DateTime  @updatedAt
+  updated_by    String?
+  deleted_at    DateTime?
+  deleted_by    String?
+
+  chat_room chat_rooms @relation(fields: [chat_room_id], references: [id])
+  chat_line chat_lines @relation(fields: [chat_line_id], references: [id])
+  user      users      @relation(fields: [user_id], references: [id])
+}
+
+model call_histories {
+  id            String    @id @default(uuid())
+  chat_room_id  String
+  initiator_id  String
+  type          String    @default("voice")
+  status        String    @default("missed")
+  is_group_call Boolean?
+  started_at    DateTime?
+  ended_at      DateTime?
+  duration      Int?
+  created_at    DateTime  @default(now())
+  created_by    String?
+  updated_at    DateTime  @updatedAt
+  updated_by    String?
+  deleted_at    DateTime?
+  deleted_by    String?
+
+  chat_room         chat_rooms          @relation(fields: [chat_room_id], references: [id])
+  initiator         users               @relation(fields: [initiator_id], references: [id])
+  call_participants call_participants[]
+}
+
+model call_participants {
+  id              String    @id @default(uuid())
+  call_history_id String
+  user_id         String
+  joined_at       DateTime?
+  left_at         DateTime?
+  created_at      DateTime  @default(now())
+  created_by      String?
+  updated_at      DateTime  @updatedAt
+  updated_by      String?
+  deleted_at      DateTime?
+  deleted_by      String?
+
+  call_history call_histories @relation(fields: [call_history_id], references: [id])
+  user         users          @relation(fields: [user_id], references: [id])
+}
+
+model media {
+  id           String    @id @default(uuid())
+  chat_line_id String
+  media_type   String
+  url          String
+  created_at   DateTime  @default(now())
+  created_by   String?
+  updated_at   DateTime  @updatedAt
+  updated_by   String?
+  deleted_at   DateTime?
+  deleted_by   String?
+
+  chat_line chat_lines @relation(fields: [chat_line_id], references: [id])
+}
