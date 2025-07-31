@@ -1,8 +1,12 @@
 import logo from "./../../assets/zaptalk.png";
 import intro from "./../../assets/intro.gif";
 import Statistics from "../../components/landing/Statistics";
+import "./Landing.css";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../constants/path";
 
 export default function Landing() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="w-full h-screen flex bg-gray-50 justify-between px-20 items-center">
@@ -28,6 +32,7 @@ export default function Landing() {
             <button
               className="rounded-md border border-transparent py-2 px-4 flex items-center text-center text-sm transition-all text-slate-600 hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
+              onClick={() => navigate(path.login)}
             >
               Get Started
               <svg
