@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { path } from "../../constants/path";
+import LoginForm from "../../components/auth/LoginForm";
+import RegisterForm from "../../components/auth/RegisterForm";
 
-const AuthForm = () => {
+const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
   return (
@@ -20,35 +20,7 @@ const AuthForm = () => {
             isSignUp ? "translate-x-full opacity-100 z-20" : "opacity-0 z-10"
           }`}
         >
-          <form className="flex flex-col items-center justify-center text-center px-12 w-3/4">
-            <h1
-              className="text-5xl font-bold mb-6"
-              style={{ fontFamily: "Caprasimo" }}
-            >
-              Sign Up
-            </h1>
-            <input
-              type="text"
-              placeholder="Name"
-              className="mb-4 w-full px-5 py-3 bg-gray-100 rounded-lg outline-none"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="mb-4 w-full px-5 py-3 bg-gray-100 rounded-lg outline-none"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="mb-6 w-full px-5 py-3 bg-gray-100 rounded-lg outline-none"
-            />
-            <button
-              type="submit"
-              className="px-12 py-4 rounded-full text-black font-bold uppercasetransition"
-            >
-              Sign Up
-            </button>
-          </form>
+          <RegisterForm />
         </div>
 
         {/* Sign In */}
@@ -57,36 +29,8 @@ const AuthForm = () => {
             isSignUp ? "translate-x-full opacity-0 z-10" : "opacity-100 z-20"
           }`}
         >
-          <form className="flex flex-col items-center justify-center text-center px-12 w-3/4">
-            <h1
-              className="text-5xl font-bold mb-6"
-              style={{ fontFamily: "Caprasimo" }}
-            >
-              Sign In
-            </h1>
-            <input
-              type="email"
-              placeholder="Email"
-              className="mb-4 w-full px-5 py-3 bg-gray-100 rounded-lg outline-none"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="mb-6 w-full px-5 py-3 bg-gray-100 rounded-lg outline-none"
-            />
-            <Link
-              to={path.home}
-              className="text-sm text-blue-500 hover:underline mb-6"
-            >
-              Forgot your password?
-            </Link>
-            <button
-              type="submit"
-              className="px-12 py-4 rounded-full bg-pink-500 text-black font-bold uppercase hover:bg-pink-400 transition"
-            >
-              Sign In
-            </button>
-          </form>
+          {" "}
+          <LoginForm />
         </div>
 
         {/* Overlay */}
@@ -146,4 +90,4 @@ const AuthForm = () => {
   );
 };
 
-export default AuthForm;
+export default AuthPage;

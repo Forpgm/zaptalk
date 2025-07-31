@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "flyonui";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -47,8 +48,9 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
-  border-color: #646cff;
+  border-color: #d69ade;
 }
 button:focus,
 button:focus-visible {
