@@ -1,0 +1,31 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: #222;
+  font-family: "Arial", sans-serif;
+  overflow: hidden;
+}
+
+.masked-text {
+  font-weight: bold;
+  color: transparent;
+  background-image: url("https://i.pinimg.com/736x/5b/f3/7e/5bf37e7930135e48ff0342fb9f3141d0.jpg");
+  background-size: 200%;
+  background-position: 0 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animate-background 5s infinite alternate linear;
+}
+
+@keyframes animate-background {
+  0% {
+    background-position: 0 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
