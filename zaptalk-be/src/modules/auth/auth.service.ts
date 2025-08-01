@@ -57,7 +57,7 @@ export class AuthService {
       ]);
     }
 
-    return await this.prisma.users.create({
+    const user = await this.prisma.users.create({
       data: {
         email,
         first_name,
@@ -67,5 +67,6 @@ export class AuthService {
         phone_number,
       },
     });
+    return user;
   }
 }
