@@ -4,11 +4,13 @@ import { AuthService } from './auth.service';
 import { PrismaModule } from 'src/database/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TokenService } from './token.service';
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, TokenService],
   imports: [
     PrismaModule,
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) =>
