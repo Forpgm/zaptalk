@@ -5,6 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import authApi from "../../apis/auth.api";
 import { isAxiosUnprocessableEntityError } from "../../utils/errors";
 import type { ErrorResponse } from "../../types/response.type";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../constants/path";
 
 export interface RegisterFormData {
   first_name: string;
@@ -17,6 +20,7 @@ export interface RegisterFormData {
 }
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -38,7 +42,8 @@ export default function RegisterForm() {
   const onSubmit: SubmitHandler<RegisterFormData> = (data) => {
     registerMutation.mutate(data, {
       onSuccess: (data) => {
-        console.log(data);
+        toast.success("Register successfully", { position: "top-center" });
+        navigate(path.emailVerify);
       },
       onError: (error) => {
         if (
