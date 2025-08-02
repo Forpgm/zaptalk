@@ -14,27 +14,28 @@ datasource db {
 }
 
 model users {
-  id             String    @id @default(uuid())
-  first_name     String
-  last_name      String
-  username       String
-  email          String    @unique
-  password       String
-  phone_number   String    @unique
-  dob            DateTime?
-  avatar_url     String    @default("https://zaptalk.s3.us-east-1.amazonaws.com/avatar/default.jpg")
-  role           String    @default("MEMBER")
-  is_verified    Boolean   @default(false)
-  is_2fa_enabled Boolean   @default(false)
-  two_fa_secret  String?
-  last_login     DateTime?
-  status         String    @default("ACTIVE")
-  created_at     DateTime  @default(now())
-  created_by     String?
-  updated_at     DateTime  @updatedAt
-  updated_by     String?
-  deleted_at     DateTime?
-  deleted_by     String?
+  id                 String    @id @default(uuid())
+  first_name         String
+  last_name          String
+  username           String
+  email              String    @unique
+  password           String
+  phone_number       String    @unique
+  dob                DateTime?
+  avatar_url         String    @default("https://zaptalk.s3.us-east-1.amazonaws.com/avatar/default.jpg")
+  role               String    @default("MEMBER")
+  is_verified        Boolean   @default(false)
+  email_verify_token String?
+  is_2fa_enabled     Boolean   @default(false)
+  two_fa_secret      String?
+  last_login         DateTime?
+  status             String    @default("INACTIVE")
+  created_at         DateTime  @default(now())
+  created_by         String?
+  updated_at         DateTime  @updatedAt
+  updated_by         String?
+  deleted_at         DateTime?
+  deleted_by         String?
 
   chat_room_members chat_room_members[]
   chat_lines        chat_lines[]

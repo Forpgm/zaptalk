@@ -6,11 +6,19 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  //filter & interceptor
+  // cors
+  console.log(process.env.DEVELOPEMENT_FRONTEND_URL);
+  app.enableCors({
+    origin: [
+      process.env.DEVELOPEMENT_FRONTEND_URL,
+      process.env.PRODUCTION_FRONTEND_URL,
+    ],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  });
+  // filter & interceptor
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
-
   // Swagger
   const config = new DocumentBuilder()
     .setTitle('Zaptalk API')

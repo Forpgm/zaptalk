@@ -28,6 +28,11 @@ export const AUTH_MESSAGES = {
   EMAIL_ALREADY_EXISTED: 'Email has already existed. Please try again.',
   PASSWORD_IS_REQUIRED: 'Password is required.',
   PASSWORD_MUST_BE_STRONG: 'Password must contain at least 6 characters.',
+  REGISTER_SUCCESSFULLY:
+    'Registration successful. Please check your email to verify your account.',
 };
 
 export const VALIDATION_FAILED = 'Validation failed';
+export const EMAIL_SUBJECT = {
+  EMAIL_VERIFICATION_SUBJECT: 'Welcome to ZapTalk – Your Account Is Ready!',
+};

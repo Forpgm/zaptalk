@@ -59,4 +59,12 @@ export class TokenService {
     ]);
     return { access_token, refresh_token };
   }
+
+  async signEmailVerifyToken(payload: TokenPayload): Promise<string> {
+    return this.signToken(
+      payload,
+      'EMAIL_VERIFY_TOKEN_SECRET',
+      'EMAIL_VERIFY_TOKEN_EXPIRES_IN',
+    );
+  }
 }

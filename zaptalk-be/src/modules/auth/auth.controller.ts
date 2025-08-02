@@ -6,10 +6,15 @@ import { setAuthCookie } from 'src/utils/cookies';
 import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
+import { MailService } from '../mail/mail.service';
+import { AUTH_MESSAGES } from 'src/constants/messages';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+  ) {}
   @Post('register')
   @ApiOperation({ summary: 'Sign up' })
   @ApiResponse({
@@ -66,11 +71,18 @@ export class AuthController {
   async register(
     @Body(new ZodValidationPipe(registerSchema))
     payload: RegisterType,
-    @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, refresh_token, user } =
+    const { user, email_verify_token } =
       await this.authService.register(payload);
-    setAuthCookie(res, refresh_token);
-    return { access_token, refresh_token, user };
+    // send email verify
+    await this.mailService.sendEmailVerify(
+      user.email,
+      user.first_name,
+      user.last_name,
+      email_verify_token,
+    );
+    return {
+      message: AUTH_MESSAGES.REGISTER_SUCCESSFULLY,
+    };
   }
 }

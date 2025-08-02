@@ -54,13 +54,22 @@ export class AuthService {
       },
     });
 
-    const { access_token, refresh_token } =
-      await this.tokenService.signAccessAndRefreshToken(
-        user.id,
-        user.email,
-        user.role,
-        user.username,
-      );
+    const email_verify_token = await this.tokenService.signEmailVerifyToken({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+    });
+    await this.prisma.users.update({
+      where: {
+        id: user.id,
+        deleted_at: null,
+        deleted_by: null,
+      },
+      data: {
+        email_verify_token,
+      },
+    });
     return {
       user: {
         id: user.id,
@@ -71,8 +80,7 @@ export class AuthService {
         phone_number: user.phone_number,
         avatar_url: user.avatar_url,
       },
-      access_token,
-      refresh_token,
+      email_verify_token,
     };
   }
 }
