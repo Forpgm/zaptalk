@@ -2,10 +2,10 @@ export default function LoginForm() {
   return (
     <form className="flex flex-col items-center justify-center text-center px-12 w-3/4">
       <h1
-        className="text-5xl font-bold mb-6"
+        className="text-5xl font-bold mb-6 text-[#69247C]"
         style={{ fontFamily: "Caprasimo" }}
       >
-        Sign Up
+        Sign In
       </h1>
       <input
         type="text"
@@ -24,9 +24,9 @@ export default function LoginForm() {
       />
       <button
         type="submit"
-        className="px-12 py-4 rounded-full text-black font-bold uppercasetransition"
+        className="px-12 py-2 w-full border rounded-full  text-[#69247C] font-semibold uppercasetransition"
       >
-        Sign Up
+        Submit
       </button>
     </form>
   );

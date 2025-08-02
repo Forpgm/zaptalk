@@ -29,22 +29,25 @@ const AuthPage = () => {
             isSignUp ? "translate-x-full opacity-0 z-10" : "opacity-100 z-20"
           }`}
         >
-          {" "}
           <LoginForm />
         </div>
 
         {/* Overlay */}
         <div
-          className={`absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 ${
-            isSignUp ? "-translate-x-full" : ""
-          }`}
+          className={`absolute top-0 left-1/2 w-1/2 h-full overflow-hidden bg-cover bg-center transition-all duration-700
+    ${
+      isSignUp
+        ? "-translate-x-full rounded-tr-[10%] rounded-br-[10%]"
+        : "rounded-tl-[10%] rounded-bl-[10%]"
+    }
+  `}
           style={{
             backgroundImage:
               "url('https://i.pinimg.com/736x/c7/ac/e7/c7ace746e5085ade3da61ad54c2ed4b0.jpg')",
           }}
         >
           <div
-            className={`relative -left-full h-full w-[200%]  transition-transform duration-700 ${
+            className={`relative -left-full h-full w-[200%] transition-transform duration-700 ${
               isSignUp ? "translate-x-1/2" : ""
             }`}
           >
@@ -59,7 +62,7 @@ const AuthPage = () => {
                 To keep connected with us please login with your personal info
               </p>
               <button
-                className="px-12 py-4 border-2 text-black border-white rounded-full font-bold uppercase hover:bg-white/10 transition"
+                className="px-12 py-4 border-2 text-white border-white rounded-full font-bold uppercase hover:bg-white/10 transition"
                 onClick={() => setIsSignUp(false)}
               >
                 Sign In
@@ -77,7 +80,7 @@ const AuthPage = () => {
                 Enter your personal details and start journey with us
               </p>
               <button
-                className="px-12 py-4 border-2 border-white text-black rounded-full font-bold uppercase hover:bg-white/10 transition"
+                className="px-12 py-4 border-2 border-white text-white rounded-full font-bold uppercase hover:bg-white/10 transition"
                 onClick={() => setIsSignUp(true)}
               >
                 Sign Up

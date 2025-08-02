@@ -16,10 +16,17 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({ resolver: yupResolver(registerSchema) });
+
   const onSubmit: SubmitHandler<RegisterFormData> = (data: RegisterFormData) =>
     console.log(data);
+
+  const values = watch();
+  const isFilled: boolean = Object.values(values).every(
+    (v) => v && v.toString().trim() !== ""
+  );
 
   return (
     <form
@@ -70,7 +77,7 @@ export default function RegisterForm() {
         {/* email */}
         <div className="input-floating max-w-sm">
           <input
-            type="email"
+            type="text"
             placeholder="email"
             className="input input-xl rounded-4xl"
             {...register("email")}
@@ -138,7 +145,10 @@ export default function RegisterForm() {
       </div>
       <button
         type="submit"
-        className="px-4 py-2 mt-10 rounded-full text-[#A19AD3] font-bold transition w-full self-start"
+        disabled={!isFilled}
+        className={`px-4 py-4 mt-10 rounded-full border text-[#69247C] hover:opacity-70 font-bold transition w-full self-start ${
+          isFilled ? "cursor-pointer" : "cursor-not-allowed opacity-80"
+        }`}
       >
         Register
       </button>
