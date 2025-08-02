@@ -30,6 +30,10 @@ export const AUTH_MESSAGES = {
   PASSWORD_MUST_BE_STRONG: 'Password must contain at least 6 characters.',
   REGISTER_SUCCESSFULLY:
     'Registration successful. Please check your email to verify your account.',
+  EMAIL_VERIFY_TOKEN_IS_INVALID: 'Email verify token is invalid.',
+  USER_NOT_FOUND: 'User not found.',
+  EMAIL_VERIFIED_SUCCESSFULLY: 'Email verified successfully',
+  EMAIL_ALREADY_VERIFIED: 'Email already verified.',
 };
 
 export const VALIDATION_FAILED = 'Validation failed';

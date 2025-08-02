@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
+import { AUTH_MESSAGES } from 'src/constants/messages';
 
 interface TokenPayload {
   sub: string;
@@ -67,4 +68,25 @@ export class TokenService {
       'EMAIL_VERIFY_TOKEN_EXPIRES_IN',
     );
   }
+
+  verifyToken = async ({
+    token,
+    secretOrPublickey,
+  }: {
+    token: string;
+    secretOrPublickey: string;
+  }): Promise<TokenPayload> => {
+    try {
+      return await this.jwtService.verifyAsync<TokenPayload>(token, {
+        secret: secretOrPublickey,
+      });
+    } catch (error) {
+      if (error instanceof JsonWebTokenError) {
+        throw new UnauthorizedException(error.message);
+      }
+      throw new UnauthorizedException(
+        AUTH_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID,
+      );
+    }
+  };
 }

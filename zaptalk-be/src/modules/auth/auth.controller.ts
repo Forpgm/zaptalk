@@ -8,6 +8,7 @@ import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { MailService } from '../mail/mail.service';
 import { AUTH_MESSAGES } from 'src/constants/messages';
+import { EmailVerifyDto } from './dto/verify-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -84,5 +85,51 @@ export class AuthController {
     return {
       message: AUTH_MESSAGES.REGISTER_SUCCESSFULLY,
     };
+  }
+
+  @Post('verify-email')
+  @ApiOperation({ summary: 'email verify' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Email verify successfully',
+    schema: {
+      example: {
+        statusCode: 201,
+        message: 'Success',
+        data: {
+          message: 'Email already verified.',
+          access_token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2YzNmVlMi1mZTRlLTRlNGItOGY1Ni00N2ZiMmNiZTU0YmQiLCJlbWFpbCI6ImdpYW15NDQ1NUBnbWFpbC5jb20iLCJyb2xlIjoiTUVNQkVSIiwidXNlcm5hbWUiOiJnbXk0NDU1IiwiaWF0IjoxNzU0MTQ3OTA2LCJleHAiOjE3NTQxNDc5NjZ9.nPiMjeKnpHaAEt6ibgB4IQD4bysUwfwJG4faRKsgwqg',
+          refresh_token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2YzNmVlMi1mZTRlLTRlNGItOGY1Ni00N2ZiMmNiZTU0YmQiLCJlbWFpbCI6ImdpYW15NDQ1NUBnbWFpbC5jb20iLCJyb2xlIjoiTUVNQkVSIiwidXNlcm5hbWUiOiJnbXk0NDU1IiwiaWF0IjoxNzU0MTQ3OTA2LCJleHAiOjE3NTY3Mzk5MDZ9.JDwUuihyeZy-kWbMKUN48HdNOSrl0UnLVruQ60cXaDM',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'invalid signature',
+        errors: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'User not found.',
+        errors: [],
+      },
+    },
+  })
+  @ApiBody({ type: EmailVerifyDto })
+  async verifyEmail(@Body() payload: EmailVerifyDto) {
+    return this.authService.verifyEmail(payload);
   }
 }
