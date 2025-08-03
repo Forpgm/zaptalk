@@ -26,7 +26,8 @@ export class AuthController {
         statusCode: 201,
         message: 'Success',
         data: {
-          message:"success"
+          message: 'success',
+        },
       },
     },
   })
