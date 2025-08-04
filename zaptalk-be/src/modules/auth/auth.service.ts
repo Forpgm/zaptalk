@@ -2,15 +2,18 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { AUTH_MESSAGES } from 'src/constants/messages';
-import { hashPassword } from 'src/utils/bcrypt';
+import { comparePassword, hashPassword } from 'src/utils/bcrypt';
 import { RegisterType } from './schema/register.schema';
 import { ValidationException } from 'src/filters/validation.exception';
 import { TokenService } from './token.service';
 import { EmailVerifyDto } from './dto/verify-email.dto';
 import { ConfigService } from '@nestjs/config';
+import { LoginDto } from './dto/login.dto';
+import { EMAIL_REGEX, PHONE_REGEX } from 'src/constants/constant';
 
 @Injectable()
 export class AuthService {
@@ -172,13 +175,96 @@ export class AuthService {
       access_token,
       refresh_token,
       user: {
+        id: user.id,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
         avatar_url: user.avatar_url,
         username: user.username,
         phone_number: user.phone_number,
+        dob: user.dob,
+        role: user.role,
       },
+    };
+  }
+
+  async login(payload: LoginDto) {
+    const { emailOrPhone, password } = payload;
+    const isPhone = !emailOrPhone.includes('@');
+
+    if (!isPhone && !EMAIL_REGEX.test(emailOrPhone)) {
+      throw new ValidationException([
+        {
+          field: 'emailOrPhone',
+          message: AUTH_MESSAGES.EMAIL_MUST_BE_VALID,
+        },
+      ]);
+    }
+
+    if (isPhone && !PHONE_REGEX.test(emailOrPhone)) {
+      if (!isPhone && !PHONE_REGEX.test(emailOrPhone)) {
+        throw new ValidationException([
+          {
+            field: 'emailOrPhone',
+            message: AUTH_MESSAGES.PHONE_NUMBER_MUST_BE_VALID,
+          },
+        ]);
+      }
+    }
+
+    const existingUser = await this.prisma.users.findFirst({
+      where: isPhone
+        ? { phone_number: emailOrPhone, deleted_at: null }
+        : { email: emailOrPhone.toLowerCase(), deleted_at: null },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        phone_number: true,
+        dob: true,
+        username: true,
+        email: true,
+        role: true,
+        avatar_url: true,
+        password: true,
+      },
+    });
+
+    if (!existingUser) {
+      throw new ValidationException([
+        {
+          field: 'emailOrPhone',
+          message: AUTH_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT,
+        },
+      ]);
+    }
+
+    const isPasswordValid: boolean = await comparePassword(
+      password,
+      existingUser.password,
+    );
+    if (!isPasswordValid) {
+      throw new ValidationException([
+        {
+          field: 'emailOrPhone',
+          message: AUTH_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT,
+        },
+      ]);
+    }
+
+    const { access_token, refresh_token } =
+      await this.tokenService.signAccessAndRefreshToken(
+        existingUser.id,
+        existingUser.email,
+        existingUser.role,
+        existingUser.username,
+      );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: userPassword, ...userWithoutPassword } = existingUser;
+    return {
+      access_token,
+      refresh_token,
+      user: userWithoutPassword,
     };
   }
 }

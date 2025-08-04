@@ -4,7 +4,7 @@ export const AUTH_MESSAGES = {
   PHONE_NUMBER_IS_REQUIRED: 'Phone number is required.',
   PHONE_NUMBER_ALREADY_EXISTED:
     'Phone number has already existed. Please try again.',
-  PHONE_NUMBER_MUST0_BE_VALID:
+  PHONE_NUMBER_MUST_BE_VALID:
     'Phone number must follow valid vietnamese format.',
   FIRST_NAME_IS_REQUIRED: 'First name is required.',
   FIRST_NAME_MUST_BE_STRING: 'First name must be string.',
@@ -34,6 +34,10 @@ export const AUTH_MESSAGES = {
   USER_NOT_FOUND: 'User not found.',
   EMAIL_VERIFIED_SUCCESSFULLY: 'Email verified successfully',
   EMAIL_ALREADY_VERIFIED: 'Email already verified.',
+  EMAILORPHONE_MUST_BE_STRING: 'Email or phone number must be string.',
+  EMAILORPHONE_IS_REQUIRED: 'Email or phone number is required.',
+  PASSWORD_MUST_BE_STRING: 'Password must be string.',
+  EMAIL_OR_PASSWORD_IS_INCORRECT: 'Invalid email/phone number or password.',
 };
 
 export const VALIDATION_FAILED = 'Validation failed';

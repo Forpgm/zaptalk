@@ -30,7 +30,7 @@ export const registerSchema = z.object({
       error: AUTH_MESSAGES.PHONE_NUMBER_IS_REQUIRED,
     })
     .regex(PHONE_REGEX, {
-      message: AUTH_MESSAGES.PHONE_NUMBER_MUST0_BE_VALID,
+      message: AUTH_MESSAGES.PHONE_NUMBER_MUST_BE_VALID,
     }),
   password: z
     .string({ error: AUTH_MESSAGES.PASSWORD_IS_REQUIRED })
