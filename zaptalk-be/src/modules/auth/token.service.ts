@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { AUTH_MESSAGES } from 'src/constants/messages';
 
-interface TokenPayload {
+export interface TokenPayload {
   sub: string;
   email: string;
   role: string;

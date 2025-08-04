@@ -1,9 +1,18 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerSchema, RegisterType } from './schema/register.schema';
 import { ZodValidationPipe } from 'src/pipe/zodValidationPipe';
 import { setAuthCookie } from 'src/utils/cookies';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { MailService } from '../mail/mail.service';
@@ -11,6 +20,7 @@ import { AUTH_MESSAGES } from 'src/constants/messages';
 import { EmailVerifyDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { loginSchema } from './schema/login.schema';
+import { AccessTokenGuard } from './guards/access-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -180,5 +190,19 @@ export class AuthController {
       await this.authService.login(payload);
     setAuthCookie(res, refresh_token);
     return { access_token, refresh_token, user };
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'user grants for access' })
+  refreshToken(
+    @Req() req: Request & { cookies: { refresh_token?: string } },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const cookies = req.cookies as { refresh_token?: string };
+    const refreshToken = cookies.refresh_token;
+    if (!refreshToken) {
+      throw new UnauthorizedException(AUTH_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
+    }
   }
 }

@@ -38,6 +38,7 @@ export const AUTH_MESSAGES = {
   EMAILORPHONE_IS_REQUIRED: 'Email or phone number is required.',
   PASSWORD_MUST_BE_STRING: 'Password must be string.',
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Invalid email/phone number or password.',
+  REFRESH_TOKEN_IS_REQUIRED: 'Refresh token is required.',
 };
 
 export const VALIDATION_FAILED = 'Validation failed';

@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { AUTH_MESSAGES } from 'src/constants/messages';
@@ -267,4 +266,6 @@ export class AuthService {
       user: userWithoutPassword,
     };
   }
+
+  async refreshToken(refresh_token: string) {}
 }
