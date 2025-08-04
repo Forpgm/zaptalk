@@ -4,6 +4,7 @@ import { path } from "../constants/path";
 import AuthPage from "../pages/auth/AuthPage";
 import EmailVerify from "../pages/auth/EmailVerify";
 import EmailVerifiedResult from "../components/auth/EmailVerifiedResult";
+import Inbox from "../pages/Inbox";
 
 export default function AppRoutes() {
   const routeElements = useRoutes([
@@ -16,7 +17,8 @@ export default function AppRoutes() {
       path: path.emailVerify,
       element: <EmailVerify />,
     },
-    { path: "users/verify-email", element: <EmailVerifiedResult /> },
+    { path: path.emailVerifyResult, element: <EmailVerifiedResult /> },
+    { path: path.inbox, element: <Inbox /> },
   ]);
 
   return routeElements;

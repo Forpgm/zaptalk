@@ -3,11 +3,17 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { path } from "../../constants/path";
 import authApi from "../../apis/auth.api";
-import { HttpStatusCode } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import type { ErrorResponse } from "../../types/response.type";
+import {
+  setAccessTokenToLocalStorage,
+  setProfileToLocalStorage,
+} from "../../utils/auth";
 
 export interface VerifyEmailRequestBody {
   email_verify_token: string;
 }
+
 export default function EmailVerifiedResult() {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
@@ -16,37 +22,32 @@ export default function EmailVerifiedResult() {
   const navigate = useNavigate();
   const token = searchParams.get("email_verify_token") ?? "";
 
+  const emailVerifyMutation = useMutation({
+    mutationFn: (body: VerifyEmailRequestBody) => authApi.verifyEmail(body),
+    onSuccess: (response) => {
+      setStatus("success");
+      toast.success(response.data.data.message, { position: "top-center" });
+      setAccessTokenToLocalStorage(response.data.data.access_token);
+      setProfileToLocalStorage(response.data.data.user);
+      navigate(path.inbox);
+    },
+    onError: (error: ErrorResponse<any>) => {
+      setStatus("error");
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate } = emailVerifyMutation;
+
   useEffect(() => {
     if (!token) {
       setStatus("error");
       return;
     }
-
-    const verifyEmail = async () => {
-      try {
-        const body = { email_verify_token: token };
-        const response = await authApi.verifyEmail(body);
-        if (response.status === HttpStatusCode.Created) {
-          setStatus("success");
-          toast.success(response.data.data.message, {
-            position: "top-center",
-          });
-        } else {
-          setStatus("error");
-          toast.error("Verification failed. Please try again.", {
-            position: "top-center",
-          });
-        }
-      } catch (error) {
-        setStatus("error");
-        toast.error("Verification failed. Please try again.", {
-          position: "top-center",
-        });
-      }
-    };
-
-    verifyEmail();
-  }, [token]);
+    mutate({ email_verify_token: token });
+  }, [token, mutate]);
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
