@@ -130,6 +130,15 @@ export class AuthService {
         message: AUTH_MESSAGES.EMAIL_ALREADY_VERIFIED,
         access_token,
         refresh_token,
+        user: {
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          avatar_url: user.avatar_url,
+          username: user.username,
+          phone_number: user.phone_number,
+          role: user.role,
+        },
       };
     }
 
@@ -162,6 +171,14 @@ export class AuthService {
       message: AUTH_MESSAGES.EMAIL_VERIFIED_SUCCESSFULLY,
       access_token,
       refresh_token,
+      user: {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        avatar_url: user.avatar_url,
+        username: user.username,
+        phone_number: user.phone_number,
+      },
     };
   }
 }

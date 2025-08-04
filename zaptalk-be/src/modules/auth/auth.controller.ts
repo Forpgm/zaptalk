@@ -9,6 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { MailService } from '../mail/mail.service';
 import { AUTH_MESSAGES } from 'src/constants/messages';
 import { EmailVerifyDto } from './dto/verify-email.dto';
+import { PassThrough } from 'stream';
 
 @Controller('auth')
 export class AuthController {
@@ -114,7 +115,13 @@ export class AuthController {
     },
   })
   @ApiBody({ type: EmailVerifyDto })
-  async verifyEmail(@Body() payload: EmailVerifyDto) {
-    return this.authService.verifyEmail(payload);
+  async verifyEmail(
+    @Body() payload: EmailVerifyDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { access_token, message, refresh_token, user } =
+      await this.authService.verifyEmail(payload);
+    setAuthCookie(res, refresh_token);
+    return { access_token, refresh_token, message, user };
   }
 }
