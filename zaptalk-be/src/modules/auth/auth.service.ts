@@ -13,6 +13,9 @@ import { EmailVerifyDto } from './dto/verify-email.dto';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';
 import { EMAIL_REGEX, PHONE_REGEX } from 'src/constants/constant';
+import { RedisService } from '../redis/redis.service';
+import { v4 as uuidv4 } from 'uuid';
+import { users } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +23,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly tokenService: TokenService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
   ) {}
 
   async register(payload: RegisterType) {
@@ -260,12 +264,57 @@ export class AuthService {
       );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: userPassword, ...userWithoutPassword } = existingUser;
+    const session_id = uuidv4();
+    await this.redisService.set(
+      `refresh_token:${userWithoutPassword.id}:${session_id}`,
+      refresh_token,
+      7 * 24 * 60 * 60,
+    );
     return {
       access_token,
       refresh_token,
       user: userWithoutPassword,
+      session_id,
     };
   }
 
-  async refreshToken(refresh_token: string) {}
+  async refreshToken(currentRefreshToken: string, session_id: string) {
+    const { sub } = await this.tokenService.verifyToken({
+      token: currentRefreshToken,
+      secretOrPublickey: this.configService.getOrThrow<string>(
+        'REFRESH_TOKEN_SECRET',
+      ),
+    });
+    const storedToken = await this.redisService.get(
+      `refresh_token:${sub}:${session_id}`,
+    );
+    console.log(storedToken, currentRefreshToken);
+    if (!storedToken || storedToken !== currentRefreshToken) {
+      throw new UnauthorizedException('Invalid token.');
+    }
+
+    const existingUser = await this.prisma.users.findFirst({
+      where: {
+        id: sub,
+        deleted_at: null,
+        deleted_by: null,
+      },
+    });
+    if (!existingUser) {
+      throw new UnauthorizedException(AUTH_MESSAGES.USER_NOT_FOUND);
+    }
+    const { access_token, refresh_token: newRefreshToken } =
+      await this.tokenService.signAccessAndRefreshToken(
+        existingUser.username,
+        existingUser.id,
+        existingUser.email,
+        existingUser.role,
+      );
+    await this.redisService.set(
+      `refresh_token:${sub}:${session_id}`,
+      newRefreshToken,
+      7 * 24 * 60 * 60,
+    );
+    return { access_token, refresh_token: newRefreshToken };
+  }
 }

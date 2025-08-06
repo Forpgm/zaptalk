@@ -7,14 +7,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenService } from './token.service';
 import { MailModule } from '../mail/mail.module';
 import { UsersModule } from '../users/users.module';
+import { AccessTokenStrategy } from './strategies/access-token.strategy';
+import { RedisModule } from '../redis/redis.module';
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, TokenService],
+  providers: [AuthService, TokenService, AccessTokenStrategy],
   imports: [
     PrismaModule,
     ConfigModule,
     MailModule,
     UsersModule,
+    RedisModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) =>

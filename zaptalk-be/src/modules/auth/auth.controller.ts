@@ -21,6 +21,8 @@ import { EmailVerifyDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { loginSchema } from './schema/login.schema';
 import { AccessTokenGuard } from './guards/access-token.guard';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { users } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -186,23 +188,68 @@ export class AuthController {
     payload: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, refresh_token, user } =
+    const { access_token, refresh_token, user, session_id } =
       await this.authService.login(payload);
     setAuthCookie(res, refresh_token);
-    return { access_token, refresh_token, user };
+    return { access_token, refresh_token, user, session_id };
   }
 
-  @UseGuards(AccessTokenGuard)
   @Post('refresh-token')
   @ApiOperation({ summary: 'user grants for access' })
-  refreshToken(
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        session_id: {
+          type: 'string',
+          example: 'c34d1470-cfe6-4404-acf3-6087c968exxx',
+        },
+      },
+      required: ['session_id'],
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'User not found.',
+        errors: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Success',
+    schema: {
+      example: {
+        statusCode: 201,
+        message: 'Success',
+        data: {
+          access_token: 'sample.jwt.token.access',
+          refresh_token: 'sample.jwt.token.refresh',
+        },
+      },
+    },
+  })
+  async refreshToken(
+    @Body() body: { session_id: string },
     @Req() req: Request & { cookies: { refresh_token?: string } },
     @Res({ passthrough: true }) res: Response,
   ) {
     const cookies = req.cookies as { refresh_token?: string };
     const refreshToken = cookies.refresh_token;
+
     if (!refreshToken) {
       throw new UnauthorizedException(AUTH_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
     }
+
+    const { access_token, refresh_token } = await this.authService.refreshToken(
+      refreshToken,
+      body.session_id,
+    );
+    setAuthCookie(res, refresh_token);
+    return { access_token, refresh_token };
   }
 }
