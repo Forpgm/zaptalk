@@ -33,7 +33,7 @@ export default function Inbox() {
             {Array(8)
               .fill(0)
               .map((_, index) => (
-                <div className="mb-3 flex items-center gap-2">
+                <div key={index} className="mb-3 flex items-center gap-2">
                   <img
                     src="https://i.pinimg.com/1200x/38/5d/04/385d04a1f8bfb35ee0b44063520f1d3e.jpg"
                     className="rounded-full h-10 w-10 object-cover"
@@ -138,7 +138,7 @@ export default function Inbox() {
           {Array(5)
             .fill(0)
             .map((_, index) => (
-              <div className="mb-3 flex items-center gap-2">
+              <div key={index} className="mb-3 flex items-center gap-2">
                 <img
                   src="https://i.pinimg.com/1200x/38/5d/04/385d04a1f8bfb35ee0b44063520f1d3e.jpg"
                   className="rounded-full h-10 w-10 object-cover"

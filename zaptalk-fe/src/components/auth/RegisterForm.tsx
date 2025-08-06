@@ -8,16 +8,7 @@ import type { ErrorResponse } from "../../types/response.type";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { path } from "../../constants/path";
-
-export interface RegisterFormData {
-  first_name: string;
-  last_name: string;
-  username: string;
-  phone_number: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
+import type { RegisterFormData } from "../../types/auth.type";
 
 export default function RegisterForm() {
   const navigate = useNavigate();

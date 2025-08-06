@@ -11,3 +11,21 @@ export function isAxiosUnprocessableEntityError<FormError>(
     error.response?.status === HttpStatusCode.UnprocessableEntity
   );
 }
+
+export function isAxiosUnauthorizedError<FormError>(
+  error: unknown
+): error is AxiosError<FormError> {
+  return (
+    isAxiosError(error) &&
+    error.response?.status === HttpStatusCode.Unauthorized
+  );
+}
+
+export function isAxiosExpiredTokenError<FormError>(
+  error: unknown
+): error is AxiosError<FormError> {
+  return (
+    isAxiosUnauthorizedError<FormError>(error) &&
+    error.message === "jwt expired"
+  );
+}
