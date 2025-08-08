@@ -29,9 +29,15 @@ export class ChatService {
 
     return channels.map((channel: Channel) => ({
       id: channel.id,
-      members: channel.data?.members || [],
+      members: channel.data?.members,
       created_by: channel.data?.created_by || '',
       last_message_at: channel.data?.last_message_at || '',
+      channelName:
+        channel.data &&
+        'name' in channel.data &&
+        typeof channel.data.name === 'string'
+          ? channel.data.name
+          : null,
     }));
   }
 

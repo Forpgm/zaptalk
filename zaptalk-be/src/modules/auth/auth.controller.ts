@@ -128,10 +128,23 @@ export class AuthController {
     @Body() payload: EmailVerifyDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, message, refresh_token, user } =
-      await this.authService.verifyEmail(payload);
+    const {
+      access_token,
+      message,
+      refresh_token,
+      user,
+      stream_token,
+      session_id,
+    } = await this.authService.verifyEmail(payload);
     setAuthCookie(res, refresh_token);
-    return { access_token, refresh_token, message, user };
+    return {
+      access_token,
+      refresh_token,
+      stream_token,
+      session_id,
+      message,
+      user,
+    };
   }
 
   @Post('login')

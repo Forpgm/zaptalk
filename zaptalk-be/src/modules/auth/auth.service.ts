@@ -132,11 +132,19 @@ export class AuthService {
           user.role,
           user.username,
         );
-
+      const session_id = uuidv4();
+      await this.redisService.set(
+        `refresh_token:${user.id}:${session_id}`,
+        refresh_token,
+        7 * 24 * 60 * 60,
+      );
+      const stream_token = this.chatService.generateToken(user.id);
       return {
         message: AUTH_MESSAGES.EMAIL_ALREADY_VERIFIED,
         access_token,
         refresh_token,
+        stream_token,
+        session_id,
         user: {
           email: user.email,
           first_name: user.first_name,
