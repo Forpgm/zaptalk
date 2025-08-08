@@ -7,10 +7,12 @@ export interface AuthState {
   isAuthenticated: boolean;
   profile: User | null;
   access_token: string | null;
+  stream_token: string | null;
   session_id: string | null;
   setAuthenticated: (
     profile: User,
     access_token: string,
+    stream_token: string,
     session_id: string
   ) => void;
   logout: () => void;
@@ -22,10 +24,17 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       profile: null,
       access_token: null,
+      stream_token: null,
       session_id: null,
 
-      setAuthenticated: (profile, access_token, session_id) => {
-        set({ isAuthenticated: true, profile, access_token, session_id });
+      setAuthenticated: (profile, access_token, stream_token, session_id) => {
+        set({
+          isAuthenticated: true,
+          profile,
+          access_token,
+          stream_token,
+          session_id,
+        });
       },
 
       logout: () => {
@@ -34,6 +43,7 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
           profile: null,
           access_token: null,
+          stream_token: null,
           session_id: null,
         });
       },

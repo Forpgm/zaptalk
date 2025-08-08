@@ -1,57 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../utils/store";
+import { StreamChat } from "stream-chat";
+import { Chat } from "stream-chat-react";
+import { ChatWindow } from "../components/chat/ChatWindow";
 
 export default function Inbox() {
   const [tabValue, setTabValue] = useState<number>(0);
+  const userId = useAuthStore((state) => state.profile?.id);
+  const name = useAuthStore((state) => state.profile?.first_name);
+  const stream_token = useAuthStore((state) => state.stream_token);
+  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const client = StreamChat.getInstance(import.meta.env.VITE_STREAM_API_KEY);
+
+    async function init() {
+      await client.connectUser(
+        {
+          id: userId!,
+          name,
+        },
+        stream_token
+      );
+
+      setChatClient(client);
+      setLoading(false);
+    }
+
+    init();
+
+    return () => {
+      if (chatClient) chatClient.disconnectUser();
+    };
+  }, [chatClient, name, stream_token, userId]);
   return (
     <>
-      <div className="grid grid-flow-row grid-cols-3 gap-4 p-5">
+      <div className="grid grid-flow-row grid-cols-3 gap-4 p-5 h-screen overflow-hidden">
         {/* chatbox */}
-        <div className="bg-slate-100 rounded-lg p-3">
-          <div className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer">
-            Find or start a conversation
+        <div className="bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto">
+          {/* searchbox */}
+          <div>
+            <div className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer">
+              Find or start a conversation
+            </div>
+            <hr className="border-t-1 border-gray-300 my-4" />
+            <div className="flex flex-row items-center justify-between px-4">
+              <p className="text-gray-400">Direct Messages</p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-6 text-gray-400 hover:cursor-pointer"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+            </div>
           </div>
-          <hr className="border-t-1 border-gray-300 my-4" />
-          <div className="flex flex-row items-center justify-between px-4">
-            <p className="text-gray-400">Direct Messages</p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              className="size-6 text-gray-400 hover:cursor-pointer"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-          </div>
-          <div className="flex flex-col gap-5">
-            {Array(8)
-              .fill(0)
-              .map((_, index) => (
-                <div key={index} className="mb-3 flex items-center gap-2">
-                  <img
-                    src="https://i.pinimg.com/1200x/38/5d/04/385d04a1f8bfb35ee0b44063520f1d3e.jpg"
-                    className="rounded-full h-10 w-10 object-cover"
-                  />
-                  <div>
-                    <h4 className="text-lg font-bold">Phạm Gia Mỹ</h4>
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm">
-                        I will reply soon. Thanks for texting
-                      </p>
-                      <p className="text-sm">•</p>
-                      <p className="text-sm">1 hour</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+
+          {/* Chat list scrollable */}
+          <div className="flex-1 mt-2 overflow-y-scroll">
+            <ChatWindow client={chatClient!} />
           </div>
         </div>
+
         {/* online & friends */}
         <div>
           <div className="flex flex-row gap-4 items-center">
@@ -106,9 +125,9 @@ export default function Inbox() {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                   />
                 </svg>

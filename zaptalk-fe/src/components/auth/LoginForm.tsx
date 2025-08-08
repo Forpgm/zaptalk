@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "../../schema/login.schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import type { LoginFormData } from "../../types/auth.type";
 import { isAxiosUnprocessableEntityError } from "../../utils/errors";
 import { useMutation } from "@tanstack/react-query";

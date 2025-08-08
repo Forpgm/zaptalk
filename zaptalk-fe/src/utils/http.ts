@@ -44,6 +44,7 @@ class Http {
             .setAuthenticated(
               data.data.user,
               data.data.access_token,
+              data.data.stream_token,
               data.data.session_id
             );
         } else if (url === URL_LOGOUT) {
@@ -60,10 +61,8 @@ class Http {
             HttpStatusCode.Unauthorized,
           ].includes(error.response?.status as number)
         ) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data: any | undefined = error.response?.data;
-          const message = data.message || error.message;
-          toast.error(message);
+          const message = error.message;
+          toast.error(message, { position: "top-center" });
         }
 
         if (

@@ -23,6 +23,7 @@ export type RegisterResponse = SuccessResponse<{
 export type LoginResponse = SuccessResponse<{
   access_token: string;
   refresh_token: string;
+  stream_token: string;
   session_id: string;
   user: User;
 }>;
@@ -32,6 +33,8 @@ export type VerifyEmailResponse = SuccessResponse<{
   access_token: string;
   refresh_token: string;
   user: User;
+  stream_token: string;
+  session_id: string;
 }>;
 
 export type RefreshTokenResponse = SuccessResponse<{
