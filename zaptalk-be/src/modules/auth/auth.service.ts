@@ -15,7 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { EMAIL_REGEX, PHONE_REGEX } from 'src/constants/constant';
 import { RedisService } from '../redis/redis.service';
 import { v4 as uuidv4 } from 'uuid';
-import { users } from '@prisma/client';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +24,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
+    private readonly chatService: ChatService,
   ) {}
 
   async register(payload: RegisterType) {
@@ -270,9 +271,11 @@ export class AuthService {
       refresh_token,
       7 * 24 * 60 * 60,
     );
+    const stream_token = this.chatService.generateToken(userWithoutPassword.id);
     return {
       access_token,
       refresh_token,
+      stream_token,
       user: userWithoutPassword,
       session_id,
     };
@@ -288,7 +291,6 @@ export class AuthService {
     const storedToken = await this.redisService.get(
       `refresh_token:${sub}:${session_id}`,
     );
-    console.log(storedToken, currentRefreshToken);
     if (!storedToken || storedToken !== currentRefreshToken) {
       throw new UnauthorizedException('Invalid token.');
     }

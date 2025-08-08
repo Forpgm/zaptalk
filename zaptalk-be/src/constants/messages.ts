@@ -42,6 +42,15 @@ export const AUTH_MESSAGES = {
 };
 
 export const VALIDATION_FAILED = 'Validation failed';
+
 export const EMAIL_SUBJECT = {
   EMAIL_VERIFICATION_SUBJECT: 'Welcome to ZapTalk – Your Account Is Ready!',
+};
+
+export const CHAT_MESSAGES = {
+  MEMBERS_ARE_REQUIRED: 'Members are required.',
+  MIN_MEMBERS_REQUIRED: 'At least 2 members are required.',
+  MAX_MEMBERS_EXCEEDED: 'Maximum number of members exceeded. Limit is 30.',
+  CHANNEL_NAME_IS_REQUIRED: 'Channel name is required.',
+  THUMBNAIL_MUST_BE_VALID_URL: 'Thumbnail must be a valid URL.',
 };

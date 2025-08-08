@@ -9,6 +9,7 @@ import { MailModule } from '../mail/mail.module';
 import { UsersModule } from '../users/users.module';
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { RedisModule } from '../redis/redis.module';
+import { ChatModule } from '../chat/chat.module';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, TokenService, AccessTokenStrategy],
@@ -18,6 +19,7 @@ import { RedisModule } from '../redis/redis.module';
     MailModule,
     UsersModule,
     RedisModule,
+    ChatModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) =>

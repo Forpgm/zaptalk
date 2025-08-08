@@ -6,7 +6,6 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerSchema, RegisterType } from './schema/register.schema';
@@ -20,9 +19,6 @@ import { AUTH_MESSAGES } from 'src/constants/messages';
 import { EmailVerifyDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { loginSchema } from './schema/login.schema';
-import { AccessTokenGuard } from './guards/access-token.guard';
-import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
-import { users } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -188,10 +184,10 @@ export class AuthController {
     payload: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, refresh_token, user, session_id } =
+    const { access_token, refresh_token, stream_token, user, session_id } =
       await this.authService.login(payload);
     setAuthCookie(res, refresh_token);
-    return { access_token, refresh_token, user, session_id };
+    return { access_token, refresh_token, stream_token, user, session_id };
   }
 
   @Post('refresh-token')
