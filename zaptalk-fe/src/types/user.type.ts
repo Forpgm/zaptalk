@@ -10,3 +10,7 @@ export interface User {
   phone_number: string;
   role: Role;
 }
+
+export interface searchUsersResponse {
+  data: User[] | [];
+}

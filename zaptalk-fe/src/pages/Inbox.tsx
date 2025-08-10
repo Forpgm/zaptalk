@@ -1,17 +1,36 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../utils/store";
+import { useAuthStore, type AuthState } from "../utils/store";
 import { StreamChat } from "stream-chat";
-import { Chat } from "stream-chat-react";
 import { ChatWindow } from "../components/chat/ChatWindow";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useShallow } from "zustand/react/shallow";
+import { toast } from "react-toastify";
+import userApi from "@/apis/users.api";
+import { useMutation } from "@tanstack/react-query";
+import type { User } from "@/types/user.type";
+import notfound from "../assets/notfound.svg";
 
 export default function Inbox() {
   const [tabValue, setTabValue] = useState<number>(0);
   const userId = useAuthStore((state) => state.profile?.id);
-  const name = useAuthStore((state) => state.profile?.first_name);
-  const stream_token = useAuthStore((state) => state.stream_token);
+  const { name, stream_token } = useAuthStore(
+    useShallow((state: AuthState) => ({
+      name: state.profile?.first_name,
+      stream_token: state.stream_token,
+    }))
+  );
   const [chatClient, setChatClient] = useState<StreamChat | null>(null);
   const [loading, setLoading] = useState(true);
+  const [openSearchModal, setOpenSearchModal] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<User[] | []>([]);
 
   useEffect(() => {
     const client = StreamChat.getInstance(import.meta.env.VITE_STREAM_API_KEY);
@@ -35,6 +54,19 @@ export default function Inbox() {
       if (chatClient) chatClient.disconnectUser();
     };
   }, [chatClient, name, stream_token, userId]);
+
+  const searchUserMutation = useMutation({
+    mutationFn: userApi.searchUsers,
+    onSuccess: (data) => {
+      setSearchResults(data.data.data);
+      console.log(data.data);
+    },
+  });
+
+  const handleSearch = (searchValue: string) => {
+    searchUserMutation.mutate(searchValue);
+  };
+
   return (
     <>
       <div className="grid grid-flow-row grid-cols-3 gap-4 p-5 h-screen overflow-hidden">
@@ -42,7 +74,10 @@ export default function Inbox() {
         <div className="bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto">
           {/* searchbox */}
           <div>
-            <div className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer">
+            <div
+              onClick={() => setOpenSearchModal(true)}
+              className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer"
+            >
               Find or start a conversation
             </div>
             <hr className="border-t-1 border-gray-300 my-4" />
@@ -174,6 +209,48 @@ export default function Inbox() {
             ))}
         </div>
       </div>
+      <Dialog
+        open={openSearchModal}
+        onOpenChange={() => setOpenSearchModal(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="py-4">
+              <input
+                type="text"
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyDown={(e) => {
+                  handleSearch(searchValue);
+                }}
+                className="w-full border bg-slate-100 px-2 py-4 rounded-md text-slate-500"
+                placeholder="Who would you like to chat with?"
+              />
+            </DialogTitle>
+            <DialogDescription className="mb-4">mentions</DialogDescription>
+            {searchResults.length > 0 ? (
+              <div>
+                {searchResults.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex flex-row items-center justify-between px-3 py-1 rounded-lg transition-colors duration-200 hover:bg-slate-200 cursor-pointer"
+                  >
+                    <div className="text-slate-500">
+                      {user.last_name} {user.first_name}
+                    </div>
+                    <div className="text-slate-500">@{user.username}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <img
+                src={notfound}
+                alt="No results found"
+                className="flex self-center w-[50%] aspect-square object-cover rounded-lg"
+              />
+            )}
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

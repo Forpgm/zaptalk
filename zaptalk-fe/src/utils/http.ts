@@ -11,6 +11,7 @@ import type { ErrorResponse } from "../types/response.type";
 import { isAxiosExpiredTokenError, isAxiosUnauthorizedError } from "./errors";
 import type { LoginResponse, RefreshTokenResponse } from "../types/auth.type";
 import { useAuthStore } from "./store";
+import { CloudHail } from "lucide-react";
 
 class Http {
   private accessToken: string;
@@ -75,7 +76,6 @@ class Http {
         ) {
           const config = error.response?.config || { headers: {}, url: "" };
           const { url } = config;
-
           if (isAxiosExpiredTokenError(error) && url !== URL_REFRESH_TOKEN) {
             this.refreshTokenRequest = this.refreshTokenRequest
               ? this.refreshTokenRequest
@@ -103,8 +103,9 @@ class Http {
     );
     this.instance.interceptors.request.use(
       (config) => {
+        console.log("access token: ", this.accessToken);
         if (this.accessToken) {
-          config.headers.authorization = this.accessToken;
+          config.headers.authorization = `Bearer ${this.accessToken}`;
         }
         return config;
       },
@@ -114,6 +115,7 @@ class Http {
     );
   }
   private async handleRefreshToken() {
+    console.log(123);
     return this.instance
       .post<RefreshTokenResponse>(URL_REFRESH_TOKEN, {
         refresh_token: this.refreshToken,
