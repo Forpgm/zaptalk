@@ -53,4 +53,6 @@ export const CHAT_MESSAGES = {
   MAX_MEMBERS_EXCEEDED: 'Maximum number of members exceeded. Limit is 30.',
   CHANNEL_NAME_IS_REQUIRED: 'Channel name is required.',
   THUMBNAIL_MUST_BE_VALID_URL: 'Thumbnail must be a valid URL.',
+  CHANNEL_ID_IS_REQUIRED: 'Channel id is required.',
+  MESSAGE_IS_REQUIRED: 'Message is required.',
 };

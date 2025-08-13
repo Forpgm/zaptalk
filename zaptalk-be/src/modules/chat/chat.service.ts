@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { Channel, ChannelData, StreamChat } from 'stream-chat';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateChatDto } from './dto/create-chat.dto';
+import { SendTextDto } from './dto/send-text.dto';
+import { users } from '@prisma/client';
 
 @Injectable()
 export class ChatService {
@@ -73,5 +75,14 @@ export class ChatService {
       members: channel.data?.members || [],
       createdById: channel.data?.created_by || '',
     };
+  }
+
+  async sendMessage(user_id: string, body: SendTextDto) {
+    const channel = this.serverClient.channel('messaging', body.channelId);
+    const message = await channel.sendMessage({
+      text: body.message,
+      user_id,
+    });
+    return message;
   }
 }
