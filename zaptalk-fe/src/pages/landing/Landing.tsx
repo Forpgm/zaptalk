@@ -1,9 +1,14 @@
-import logo from "./../../assets/zaptalk.png";
-import intro from "./../../assets/intro.gif";
-import Statistics from "../../components/landing/Statistics";
+import { createFileRoute } from "@tanstack/react-router";
 import "./Landing.css";
+import logo from "../../assets/zaptalk.png";
+import intro from "../../assets/intro.gif";
+import { path } from "@/constants/path";
 import { useNavigate } from "react-router-dom";
-import { path } from "../../constants/path";
+import Statistics from "@/components/landing/Statistics";
+
+export const Route = createFileRoute("/")({
+  component: Landing,
+});
 
 export default function Landing() {
   const navigate = useNavigate();

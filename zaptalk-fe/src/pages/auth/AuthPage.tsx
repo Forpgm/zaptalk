@@ -2,7 +2,7 @@ import { useState } from "react";
 import LoginForm from "../../components/auth/LoginForm";
 import RegisterForm from "../../components/auth/RegisterForm";
 
-const AuthPage = () => {
+export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
   return (
@@ -91,6 +91,4 @@ const AuthPage = () => {
       </div>
     </div>
   );
-};
-
-export default AuthPage;
+}
