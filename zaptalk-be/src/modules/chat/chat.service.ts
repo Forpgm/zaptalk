@@ -4,7 +4,6 @@ import { Channel, ChannelData, StreamChat } from 'stream-chat';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { SendTextDto } from './dto/send-text.dto';
-import { users } from '@prisma/client';
 
 @Injectable()
 export class ChatService {

@@ -327,4 +327,20 @@ export class AuthService {
     );
     return { access_token, refresh_token: newRefreshToken };
   }
+
+  async logout(session_id: string, refresh_token: string) {
+    const { sub } = await this.tokenService.verifyToken({
+      token: refresh_token,
+      secretOrPublickey: this.configService.getOrThrow<string>(
+        'REFRESH_TOKEN_SECRET',
+      ),
+    });
+    const storedToken = await this.redisService.get(
+      `refresh_token:${sub}:${session_id}`,
+    );
+    if (!storedToken || storedToken !== refresh_token) {
+      throw new UnauthorizedException('Invalid token.');
+    }
+    await this.redisService.del(`refresh_token:${sub}:${session_id}`);
+  }
 }

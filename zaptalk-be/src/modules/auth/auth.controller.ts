@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerSchema, RegisterType } from './schema/register.schema';
@@ -19,6 +20,7 @@ import { AUTH_MESSAGES } from 'src/constants/messages';
 import { EmailVerifyDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { loginSchema } from './schema/login.schema';
+import { AccessTokenGuard } from './guards/access-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -260,5 +262,23 @@ export class AuthController {
     );
     setAuthCookie(res, refresh_token);
     return { access_token, refresh_token };
+  }
+
+  @ApiOperation({ summary: 'user sends a message in a chat.' })
+  @Post('/logout')
+  @UseGuards(AccessTokenGuard)
+  async logout(
+    @Body() body: { session_id: string },
+    @Req() req: Request & { cookies: { refresh_token?: string } },
+  ) {
+    const cookies = req.cookies as { refresh_token?: string };
+    const refreshToken = cookies.refresh_token;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException(AUTH_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
+    }
+
+    await this.authService.logout(refreshToken, body.session_id);
+    return { message: 'Logout successful' };
   }
 }

@@ -23,7 +23,7 @@ export class AccessTokenStrategy extends PassportStrategy(
   async validate(payload: TokenPayload) {
     const user = await this.userService.findOne({ id: payload.sub });
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid Access Token.');
     }
     return user;
   }
