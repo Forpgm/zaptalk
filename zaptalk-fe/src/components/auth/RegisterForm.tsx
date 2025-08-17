@@ -6,9 +6,9 @@ import authApi from "../../apis/auth.api";
 import { isAxiosUnprocessableEntityError } from "../../utils/errors";
 import type { ErrorResponse } from "../../types/response.type";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { path } from "../../constants/path";
 import type { RegisterFormData } from "../../types/auth.type";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function RegisterForm() {
   const navigate = useNavigate();

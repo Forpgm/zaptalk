@@ -11,7 +11,6 @@ import type { ErrorResponse } from "../types/response.type";
 import { isAxiosExpiredTokenError, isAxiosUnauthorizedError } from "./errors";
 import type { LoginResponse, RefreshTokenResponse } from "../types/auth.type";
 import { useAuthStore } from "./store";
-import { CloudHail } from "lucide-react";
 
 class Http {
   private accessToken: string;

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
 export default function Friends() {
   const [tabValue, setTabValue] = useState<number>(0);
@@ -12,8 +11,7 @@ export default function Friends() {
           <div className="font-semibold">Friends</div>•
           <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-gray-200 dark:border-gray-700 dark:text-gray-400">
             <li>
-              <Link
-                to=""
+              <div
                 onClick={() => setTabValue(0)}
                 aria-current="page"
                 className={`inline-block p-4 rounded-t-lg ${
@@ -23,11 +21,10 @@ export default function Friends() {
                 }`}
               >
                 Online
-              </Link>
+              </div>
             </li>
             <li>
-              <Link
-                to={""}
+              <div
                 onClick={() => setTabValue(1)}
                 className={`inline-block p-4 rounded-t-lg ${
                   tabValue === 1
@@ -36,7 +33,7 @@ export default function Friends() {
                 }`}
               >
                 All
-              </Link>
+              </div>
             </li>
           </ul>
           <button className="bg-[#725CAD] text-white px-3 py-2 rounded-lg hover:cursor-pointer hover:bg-[#0B1D51]">

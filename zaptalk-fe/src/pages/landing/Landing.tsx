@@ -1,9 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import "./Landing.css";
 import logo from "../../assets/zaptalk.png";
 import intro from "../../assets/intro.gif";
 import { path } from "@/constants/path";
-import { useNavigate } from "react-router-dom";
 import Statistics from "@/components/landing/Statistics";
 
 export const Route = createFileRoute("/")({

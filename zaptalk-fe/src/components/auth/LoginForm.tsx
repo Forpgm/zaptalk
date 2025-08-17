@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { loginSchema } from "../../schema/login.schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -9,6 +8,7 @@ import authApi from "../../apis/auth.api";
 import { toast } from "react-toastify";
 import { path } from "../../constants/path";
 import type { ErrorResponse } from "../../types/response.type";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function LoginForm() {
     await loginMutation.mutateAsync(data, {
       onSuccess: (data) => {
         toast.success("Login successfully", { position: "top-center" });
-        navigate(path.inbox);
+        navigate({ to: path.inbox });
       },
       onError: (error) => {
         if (

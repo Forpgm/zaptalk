@@ -68,9 +68,13 @@ export default function Inbox() {
 
   return (
     <div>
-      <div className="grid grid-flow-row grid-cols-3 gap-4 p-5 h-screen overflow-hidden">
-        {/* chatbox */}
-        <div className="bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto">
+      <div
+        className={`${selectedChat ? "flex" : "grid grid-flow-row grid-cols-3 gap-4"} p-5 h-screen overflow-hidden`}
+      >
+        {/* chatbox - sidebar when chat is selected */}
+        <div
+          className={`${selectedChat ? "w-80 flex-shrink-0" : "col-span-1"} bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto`}
+        >
           {/* searchbox */}
           <div>
             <div
@@ -107,8 +111,12 @@ export default function Inbox() {
             />
           </div>
         </div>
+
+        {/* Chat window - full width when selected */}
         {selectedChat ? (
-          <ChatWindow channelId={selectedChat} />
+          <div className="flex-1 ml-4">
+            <ChatWindow channelId={selectedChat} />
+          </div>
         ) : (
           <>
             {/* friend list */}

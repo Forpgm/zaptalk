@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { path } from "../../constants/path";
 import authApi from "../../apis/auth.api";
@@ -9,6 +8,8 @@ import {
   setAccessTokenToLocalStorage,
   setProfileToLocalStorage,
 } from "../../utils/auth";
+import { useNavigate } from "@tanstack/react-router";
+import { useSearchParams } from "react-router-dom";
 
 export interface VerifyEmailRequestBody {
   email_verify_token: string;
@@ -29,7 +30,7 @@ export default function EmailVerifiedResult() {
       toast.success(response.data.data.message, { position: "top-center" });
       setAccessTokenToLocalStorage(response.data.data.access_token);
       setProfileToLocalStorage(response.data.data.user);
-      navigate(path.inbox);
+      navigate({ to: path.inbox });
     },
     onError: (error: ErrorResponse<any>) => {
       setStatus("error");
@@ -67,7 +68,7 @@ export default function EmailVerifiedResult() {
           </p>
           <button
             className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
-            onClick={() => navigate(path.login)}
+            onClick={() => navigate({ to: path.login })}
           >
             Go to Login
           </button>
