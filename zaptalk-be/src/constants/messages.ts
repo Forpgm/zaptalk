@@ -55,4 +55,5 @@ export const CHAT_MESSAGES = {
   THUMBNAIL_MUST_BE_VALID_URL: 'Thumbnail must be a valid URL.',
   CHANNEL_ID_IS_REQUIRED: 'Channel id is required.',
   MESSAGE_IS_REQUIRED: 'Message is required.',
+  CHANNEL_IS_NOT_FOUND: 'Channel does not found. Please try again.',
 };

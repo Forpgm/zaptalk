@@ -1,9 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Channel, ChannelData, StreamChat } from 'stream-chat';
+import {
+  Channel,
+  ChannelData,
+  ErrorFromResponse,
+  StreamChat,
+} from 'stream-chat';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { SendTextDto } from './dto/send-text.dto';
+import { deleteChatDto } from './dto/delete-chat.dto';
+import e from 'express';
+import { CHAT_MESSAGES } from 'src/constants/messages';
 
 @Injectable()
 export class ChatService {
@@ -83,5 +91,21 @@ export class ChatService {
       user_id,
     });
     return message;
+  }
+
+  async deleteChat(body: deleteChatDto) {
+    try {
+      const channel = this.serverClient.channel('messaging', body.channelId);
+      if (channel) {
+        await channel.delete();
+      }
+    } catch (err: unknown) {
+      if (
+        err instanceof ErrorFromResponse &&
+        err.response.status === Number(HttpStatus.NOT_FOUND)
+      ) {
+        throw new NotFoundException(CHAT_MESSAGES.CHANNEL_IS_NOT_FOUND);
+      }
+    }
   }
 }
