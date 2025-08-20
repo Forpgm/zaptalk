@@ -1,27 +1,11 @@
 import { type StreamChat } from "stream-chat";
-import { useEffect } from "react";
-import { Chat, ChannelList, useChatContext } from "stream-chat-react";
+import { Chat, ChannelList, ChannelPreviewMessenger } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
 
 type Props = {
   client: StreamChat;
   selectedChat?: string | null;
   onChannelSelected?: (channelId: string) => void;
-};
-
-const ActiveChannelWatcher = ({
-  onSelected,
-}: {
-  onSelected?: (channelId: string) => void;
-}) => {
-  const { channel } = useChatContext();
-  useEffect(() => {
-    if (onSelected && channel?.id) {
-      onSelected(channel.id);
-    }
-  }, [channel?.id, onSelected]);
-
-  return null;
 };
 
 export const ChatList = ({ client, onChannelSelected }: Props) => {
@@ -51,8 +35,26 @@ export const ChatList = ({ client, onChannelSelected }: Props) => {
   return (
     <Chat client={client}>
       <div className="h-full">
-        <ActiveChannelWatcher onSelected={onChannelSelected} />
-        <ChannelList setActiveChannelOnMount={false} />
+        <ChannelList
+          setActiveChannelOnMount={false}
+          Preview={(previewProps) => {
+            return (
+              <div
+                onClick={() => {
+                  previewProps.setActiveChannel?.(
+                    previewProps.channel,
+                    undefined
+                  );
+                  const id = previewProps.channel?.id;
+                  if (!id) return;
+                  onChannelSelected?.(id);
+                }}
+              >
+                <ChannelPreviewMessenger {...previewProps} />
+              </div>
+            );
+          }}
+        />
       </div>
     </Chat>
   );

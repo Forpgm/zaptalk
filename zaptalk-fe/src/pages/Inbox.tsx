@@ -69,11 +69,10 @@ export default function Inbox() {
   return (
     <div>
       <div
-        className={`${selectedChat ? "flex" : "grid grid-flow-row grid-cols-3 gap-4"} p-5 h-screen overflow-hidden`}
+        className={`grid grid-flow-row grid-cols-3  gap-4 p-5 h-screen overflow-hidden`}
       >
-        {/* chatbox - sidebar when chat is selected */}
         <div
-          className={`${selectedChat ? "w-80 flex-shrink-0" : "col-span-1"} bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto`}
+          className={`col-span-1 bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto`}
         >
           {/* searchbox */}
           <div>
@@ -82,6 +81,13 @@ export default function Inbox() {
               className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer"
             >
               Find or start a conversation
+            </div>
+            <hr className="border-t-1 border-gray-300 my-4" />
+            <div
+              onClick={() => setSelectedChat(null)}
+              className="font-semibold border-gray-100 bg-slate-200 px-2 py-3 flex items-center justify-center rounded-xl hover:bg-slate-300 hover:cursor-pointer"
+            >
+              Friends
             </div>
             <hr className="border-t-1 border-gray-300 my-4" />
             <div className="flex flex-row items-center justify-between px-4">
@@ -112,9 +118,9 @@ export default function Inbox() {
           </div>
         </div>
 
-        {/* Chat window - full width when selected */}
+        {/* Chat window */}
         {selectedChat ? (
-          <div className="flex-1 ml-4">
+          <div className="col-span-2">
             <ChatWindow channelId={selectedChat} />
           </div>
         ) : (
