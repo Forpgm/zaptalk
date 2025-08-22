@@ -16,7 +16,7 @@ import { Request, Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { MailService } from '../mail/mail.service';
-import { AUTH_MESSAGES } from 'src/constants/messages';
+import { AUTH_MESSAGES, SUCCESS_MESSAGES } from 'src/constants/messages';
 import { EmailVerifyDto } from './dto/verify-email.dto';
 import { LoginDto } from './dto/login.dto';
 import { loginSchema } from './schema/login.schema';
@@ -157,22 +157,24 @@ export class AuthController {
     schema: {
       example: {
         statusCode: 201,
-        message: 'Success',
+        message: 'Login Successfully',
         data: {
           access_token: 'sample.jwt.token.access',
           refresh_token: 'sample.jwt.token.refresh',
+          stream_token: 'xyz.stream_token',
           user: {
-            id: 'f262cc3b-dbf2-4cdf-8b2b-4a3e676960b2',
-            first_name: 'pham',
-            last_name: 'my',
-            phone_number: '0949309132',
+            id: 'e05dd8a6-560a-443d-b826-95c4940cxxx',
+            first_name: 'Minh Anh',
+            last_name: 'Phạm',
+            phone_number: '0949309xxx',
             dob: null,
-            username: 'forpgm',
-            email: 'phm.giamy@gmail.com',
+            username: 'pma',
+            email: 'giamyxxxgmail.com',
             role: 'MEMBER',
             avatar_url:
               'https://zaptalk.s3.us-east-1.amazonaws.com/avatar/default.jpg',
           },
+          session_id: '540b179b-80ff-48a0-99e8-57c492c8fzzz',
         },
       },
     },
@@ -202,7 +204,10 @@ export class AuthController {
     const { access_token, refresh_token, stream_token, user, session_id } =
       await this.authService.login(payload);
     setAuthCookie(res, refresh_token);
-    return { access_token, refresh_token, stream_token, user, session_id };
+    return {
+      message: SUCCESS_MESSAGES.LOGIN_SUCCESSFULLY,
+      data: { access_token, refresh_token, stream_token, user, session_id },
+    };
   }
 
   @Post('refresh-token')

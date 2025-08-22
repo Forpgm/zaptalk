@@ -7,6 +7,8 @@ import { UsersModule } from './modules/users/users.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatModule } from './modules/chat/chat.module';
+import { ReactionModule } from './modules/reaction/reaction.module';
+import { StreamModule } from './modules/stream/stream.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { ChatModule } from './modules/chat/chat.module';
     RedisModule,
     ConfigModule,
     ChatModule,
+    ReactionModule,
+    StreamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

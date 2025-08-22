@@ -57,3 +57,24 @@ export const CHAT_MESSAGES = {
   MESSAGE_IS_REQUIRED: 'Message is required.',
   CHANNEL_IS_NOT_FOUND: 'Channel does not found. Please try again.',
 };
+
+export const REACTION_MESSAGES = {
+  MESSAGE_ID_IS_REQUIRED: 'Message Id is required.',
+  CHANNEL_ID_IS_REQUIRED: 'Channel Id is required.',
+  REACTION_TYPE_IS_REQUIRED: 'Reaction type is required.',
+  MESSAGE_NOT_FOUND: 'Message Not Found.',
+};
+
+export const SUCCESS_MESSAGES = {
+  LOGIN_SUCCESSFULLY: 'Login Successfully.',
+  REACTION_ADDED: 'Reaction added successfully',
+  REACTION_REMOVED: 'Reaction removed successfully',
+  MESSAGE_SENT: 'Message sent successfully',
+  CHANNEL_CREATED: 'Channel created successfully',
+  USER_REGISTERED: 'User registered successfully',
+  USER_LOGGED_IN: 'User logged in successfully',
+  EMAIL_VERIFIED: 'Email verified successfully',
+  PROFILE_UPDATED: 'Profile updated successfully',
+  PASSWORD_CHANGED: 'Password changed successfully',
+  ACCOUNT_DELETED: 'Account deleted successfully',
+};

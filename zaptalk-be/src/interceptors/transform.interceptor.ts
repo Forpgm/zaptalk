@@ -27,11 +27,19 @@ export class TransformInterceptor<T>
     const statusCode = res.statusCode;
 
     return next.handle().pipe(
-      map((data: T) => ({
-        statusCode,
-        message: 'Success',
-        data,
-      })),
+      map((response: T) => {
+        let message: string = '';
+        let data = response;
+
+        message = (response as ApiResponse<T>).message;
+        data = (response as ApiResponse<T>).data;
+        console.log(message, data);
+        return {
+          statusCode,
+          message,
+          data,
+        };
+      }),
     );
   }
 }

@@ -1,5 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import {
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   Channel,
   ChannelData,
@@ -10,28 +14,23 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { SendTextDto } from './dto/send-text.dto';
 import { deleteChatDto } from './dto/delete-chat.dto';
-import e from 'express';
 import { CHAT_MESSAGES } from 'src/constants/messages';
 
 @Injectable()
 export class ChatService {
-  private readonly serverClient: StreamChat;
-  constructor(private readonly configService: ConfigService) {
-    this.serverClient = StreamChat.getInstance(
-      this.configService.getOrThrow<string>('API_KEY'),
-      this.configService.getOrThrow<string>('API_SECRET'),
-    );
-  }
+  constructor(
+    @Inject('STREAM_CLIENT') private readonly streamClient: StreamChat,
+  ) {}
 
   generateToken(userId: string): string {
-    return this.serverClient.createToken(userId);
+    return this.streamClient.createToken(userId);
   }
 
   async getChannels(user_id: string) {
     const filter = { type: 'messaging', members: { $in: [user_id] } };
     const sort = [{ last_message_at: -1 }];
 
-    const channels = await this.serverClient.queryChannels(filter, sort, {
+    const channels = await this.streamClient.queryChannels(filter, sort, {
       watch: true,
       state: true,
     });
@@ -43,15 +42,14 @@ export class ChatService {
       last_message_at: channel.data?.last_message_at || '',
       channelName:
         channel.data &&
-        'name' in channel.data &&
-        typeof channel.data.name === 'string'
-          ? channel.data.name
+        typeof (channel.data as { name?: string }).name === 'string'
+          ? (channel.data as { name?: string }).name
           : null,
     }));
   }
 
   async getChannelMessages(channelId: string) {
-    const channel = this.serverClient.channel('messaging', channelId);
+    const channel = this.streamClient.channel('messaging', channelId);
     const messages = await channel.query({ messages: { limit: 50 } });
     return messages;
   }
@@ -60,10 +58,10 @@ export class ChatService {
     const { members, name, thumbnail } = body;
     const uniqueUserIds = Array.from(new Set([...members, created_by_id]));
     for (const userId of uniqueUserIds) {
-      await this.serverClient.upsertUser({ id: userId });
+      await this.streamClient.upsertUser({ id: userId });
     }
     const channelId = uuidv4();
-    const channel = this.serverClient.channel('messaging', channelId, {
+    const channel = this.streamClient.channel('messaging', channelId, {
       members,
       created_by_id,
       name,
@@ -75,9 +73,8 @@ export class ChatService {
       channelType: channel.data?.type,
       channelName:
         channel.data &&
-        'name' in channel.data &&
-        typeof channel.data.name === 'string'
-          ? channel.data.name
+        typeof (channel.data as { name?: string }).name === 'string'
+          ? (channel.data as { name?: string }).name
           : null,
       members: channel.data?.members || [],
       createdById: channel.data?.created_by || '',
@@ -85,7 +82,7 @@ export class ChatService {
   }
 
   async sendMessage(user_id: string, body: SendTextDto) {
-    const channel = this.serverClient.channel('messaging', body.channelId);
+    const channel = this.streamClient.channel('messaging', body.channelId);
     const message = await channel.sendMessage({
       text: body.message,
       user_id,
@@ -95,7 +92,7 @@ export class ChatService {
 
   async deleteChat(body: deleteChatDto) {
     try {
-      const channel = this.serverClient.channel('messaging', body.channelId);
+      const channel = this.streamClient.channel('messaging', body.channelId);
       if (channel) {
         await channel.delete();
       }
