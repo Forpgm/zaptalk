@@ -16,6 +16,7 @@ import notfound from "../assets/notfound.svg";
 import Friends from "@/components/chat/Friends";
 import { ChatList } from "@/components/chat/ChatList";
 import ChatWindow from "@/components/chat/ChatWindow";
+import ProfileBubble from "@/components/profile/ProfileBubble";
 
 export default function Inbox() {
   const userId = useAuthStore((state) => state.profile?.id);
@@ -72,7 +73,7 @@ export default function Inbox() {
         className={`grid grid-flow-row grid-cols-3  gap-4 p-5 h-screen overflow-hidden`}
       >
         <div
-          className={`col-span-1 bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto`}
+          className={`col-span-1 bg-slate-100 rounded-lg p-3 h-full flex flex-col overflow-auto relative`}
         >
           {/* searchbox */}
           <div>
@@ -110,12 +111,13 @@ export default function Inbox() {
           </div>
 
           {/* Chat list scrollable */}
-          <div className="flex-1 mt-2 overflow-y-scroll">
+          <div className="flex-1 mt-2 overflow-y-scroll pb-10">
             <ChatList
               client={chatClient!}
               onChannelSelected={(id) => setSelectedChat(id)}
             />
           </div>
+          <ProfileBubble />
         </div>
 
         {/* Chat window */}

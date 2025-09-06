@@ -2,15 +2,6 @@ import type {
   DeleteChatHistoryRequestBody,
   DeleteChatResponse,
 } from "@/types/chat.type";
-import type { VerifyEmailRequestBody } from "../components/auth/EmailVerifiedResult";
-import type {
-  RegisterResponse,
-  LoginFormData,
-  VerifyEmailResponse,
-  RegisterFormData,
-  LoginResponse,
-  RefreshTokenRequestBody,
-} from "../types/auth.type";
 
 import http from "../utils/http";
 
