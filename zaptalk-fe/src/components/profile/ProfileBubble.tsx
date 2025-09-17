@@ -1,5 +1,7 @@
 import { useAuthStore, type AuthState } from "@/utils/store";
+import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
+import ProfileModal from "./ProfileModal";
 
 export default function ProfileBubble() {
   const { profile } = useAuthStore(
@@ -7,13 +9,17 @@ export default function ProfileBubble() {
       profile: state.profile,
     }))
   );
+  const [openProfileModal, setOpenProfileModal] = useState<boolean>(false);
 
   return (
     <div className="border w-[95%] mx-auto absolute bottom-0 z-[100] bg-white px-4 py-2 rounded-md">
       <div className="flex flex-row items-center justify-between">
-        <div className="flex flex-row items-center gap-2 hover:bg-slate-200 hover:rounded-lg p-1 hover:cursor-pointer transition-colors duration-300 w-full">
+        <div
+          className="flex flex-row items-center gap-2 hover:bg-slate-200 hover:rounded-lg p-1 hover:cursor-pointer transition-colors duration-300 w-full"
+          onClick={() => setOpenProfileModal(true)}
+        >
           <img
-            src="https://i.pinimg.com/736x/87/f3/7a/87f37aecad69e244b8229f362678a25d.jpg"
+            src={profile!.avatar_url}
             className="rounded-full w-12 h-12 object-contain border"
           />
           <div>{profile!.username}</div>
@@ -40,6 +46,7 @@ export default function ProfileBubble() {
           </svg>
         </div>
       </div>
+      <div className="relative">{openProfileModal && <ProfileModal />}</div>
     </div>
   );
 }
